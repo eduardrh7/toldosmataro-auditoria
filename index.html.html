@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría Digital · Toldos Mataró</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #e84545;
+    --accent2: #f5a623;
+    --green: #27ae60;
+    --blue: #2980b9;
+    --surface: #f8f9fc;
+    --card: #ffffff;
+    --border: #e8eaf0;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--surface); color: var(--text); line-height: 1.6; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--primary); color: white;
+    display: flex; align-items: center; gap: 24px;
+    padding: 0 32px; height: 56px;
+    box-shadow: 0 2px 16px rgba(0,0,0,.25);
+    overflow-x: auto; white-space: nowrap;
+  }
+  nav .brand { font-weight: 700; font-size: 14px; margin-right: 16px; opacity: .9; flex-shrink: 0; }
+  nav a { color: rgba(255,255,255,.75); text-decoration: none; font-size: 13px; padding: 4px 8px; border-radius: 6px; transition: all .2s; flex-shrink: 0; }
+  nav a:hover { color: white; background: rgba(255,255,255,.1); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #16213e 60%, #0f3460 100%);
+    color: white; padding: 64px 32px 48px; text-align: center;
+  }
+  .hero .tag { display: inline-block; background: var(--accent); color: white; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(26px, 4vw, 42px); font-weight: 800; margin-bottom: 8px; }
+  .hero .sub { opacity: .7; font-size: 15px; margin-bottom: 32px; }
+  .hero .meta { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+  .hero .meta-item { text-align: center; }
+  .hero .meta-item .val { font-size: 28px; font-weight: 800; }
+  .hero .meta-item .lbl { font-size: 12px; opacity: .6; margin-top: 2px; }
+
+  /* SCORE CIRCLE */
+  .score-circle {
+    width: 120px; height: 120px; border-radius: 50%;
+    background: conic-gradient(var(--accent2) 0% 52%, rgba(255,255,255,.15) 52% 100%);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; position: relative;
+  }
+  .score-circle::before {
+    content: ''; position: absolute; width: 90px; height: 90px;
+    border-radius: 50%; background: var(--primary);
+  }
+  .score-circle .score-val { position: relative; z-index: 1; font-size: 26px; font-weight: 800; }
+
+  /* CONTAINER */
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 48px 0; }
+
+  /* ALERT BOXES */
+  .alert { display: flex; gap: 16px; align-items: flex-start; padding: 18px 22px; border-radius: var(--radius); margin-bottom: 16px; }
+  .alert-critical { background: #fff1f0; border-left: 4px solid var(--accent); }
+  .alert-warning  { background: #fffbeb; border-left: 4px solid var(--accent2); }
+  .alert-ok       { background: #f0fdf4; border-left: 4px solid var(--green); }
+  .alert-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .alert-body strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .alert-body p { font-size: 13.5px; color: #444; line-height: 1.5; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
+  .badge-high   { background: #fee2e2; color: #b91c1c; }
+  .badge-medium { background: #fef3c7; color: #92400e; }
+  .badge-low    { background: #dbeafe; color: #1e40af; }
+
+  /* CARDS GRID */
+  .grid { display: grid; gap: 20px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 24px; }
+  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .icon { font-size: 18px; }
+
+  /* SCORE BARS */
+  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .score-row .label { font-size: 13px; width: 200px; flex-shrink: 0; }
+  .score-row .bar-wrap { flex: 1; background: #eef0f5; border-radius: 8px; height: 10px; overflow: hidden; }
+  .score-row .bar { height: 100%; border-radius: 8px; transition: width .6s ease; }
+  .bar-green  { background: linear-gradient(90deg, #27ae60, #2ecc71); }
+  .bar-yellow { background: linear-gradient(90deg, #f39c12, #f5a623); }
+  .bar-red    { background: linear-gradient(90deg, #c0392b, #e84545); }
+  .score-row .num { font-size: 13px; font-weight: 700; width: 36px; text-align: right; }
+
+  /* SECTION HEADERS */
+  .section-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .section-desc { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 0 0 40px; }
+
+  /* JOURNEY MAP */
+  .journey { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 8px; }
+  .journey-step { flex: 1; min-width: 130px; text-align: center; position: relative; }
+  .journey-step .step-inner {
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 16px 12px; margin: 0 4px;
+    height: 100%;
+  }
+  .journey-step.missing .step-inner { background: #fff5f5; border-color: var(--accent); border-style: dashed; }
+  .journey-step.partial .step-inner { background: #fffbeb; border-color: var(--accent2); }
+  .journey-step.ok .step-inner { background: #f0fdf4; border-color: var(--green); }
+  .journey-step .step-icon { font-size: 24px; margin-bottom: 8px; }
+  .journey-step .step-name { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .journey-step .step-note { font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .journey-arrow { display: flex; align-items: center; padding-top: 16px; color: var(--muted); font-size: 18px; flex-shrink: 0; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 600; letter-spacing: .3px; }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafbfd; }
+  .impact-high   { color: #b91c1c; font-weight: 700; }
+  .impact-medium { color: #92400e; font-weight: 700; }
+  .impact-low    { color: #1e40af; font-weight: 700; }
+
+  /* QUICKWINS */
+  .quickwin { display: flex; gap: 16px; padding: 20px; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; align-items: flex-start; }
+  .quickwin .qnum { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .quickwin h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .quickwin p { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .quickwin .meta-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta-tag { font-size: 11px; padding: 2px 10px; border-radius: 12px; background: #f1f5f9; color: var(--muted); font-weight: 600; }
+  .meta-tag.free { background: #dcfce7; color: #166534; }
+  .meta-tag.fast { background: #dbeafe; color: #1e3a8a; }
+  .meta-tag.high { background: #fee2e2; color: #991b1b; }
+
+  /* COMPETITOR TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .comp-table th { background: var(--primary); color: white; padding: 12px; text-align: center; }
+  .comp-table th:first-child { text-align: left; }
+  .comp-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: center; }
+  .comp-table td:first-child { text-align: left; font-weight: 600; }
+  .comp-table .winner { background: #f0fdf4; }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: var(--accent); font-weight: 700; }
+  .partial-mark { color: var(--accent2); font-weight: 700; }
+
+  /* DETAIL CARDS */
+  .detail-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; overflow: hidden; }
+  .detail-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .detail-header h3 { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .detail-body { padding: 20px 24px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .two-col ul { padding-left: 18px; }
+  .two-col ul li { font-size: 13.5px; margin-bottom: 6px; color: #444; }
+  .two-col h4 { font-size: 12px; font-weight: 700; color: var(--green); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+  .two-col h4.bad { color: var(--accent); }
+  .score-pill { background: var(--primary); color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+  .score-pill.green { background: var(--green); }
+  .score-pill.yellow { background: var(--accent2); }
+  .score-pill.red { background: var(--accent); }
+
+  /* EXECUTIVE SUMMARY */
+  .exec-box { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: var(--radius); padding: 36px; margin-bottom: 32px; }
+  .exec-box h2 { font-size: 18px; opacity: .6; font-weight: 400; margin-bottom: 16px; }
+  .exec-para { font-size: 15px; line-height: 1.8; margin-bottom: 16px; opacity: .9; }
+  .exec-para:last-child { margin-bottom: 0; }
+  .exec-para strong { color: var(--accent2); font-weight: 700; }
+
+  /* COPY ANALYSIS */
+  .copy-example { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  .copy-example .label-before { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .copy-example .label-after  { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; margin-top: 12px; }
+  .copy-example .text { font-size: 13.5px; font-style: italic; color: #333; padding: 8px 12px; border-radius: 6px; }
+  .copy-example .text.before { background: #fff1f0; }
+  .copy-example .text.after  { background: #f0fdf4; }
+
+  /* FOOTER */
+  footer { background: var(--primary); color: white; text-align: center; padding: 32px; font-size: 13px; opacity: .8; margin-top: 64px; }
+
+  /* PRINT */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+    nav { display: none; }
+    .hero { padding: 32px; }
+    section { padding: 20px 0; }
+    .detail-body { display: block !important; }
+    .journey { overflow: visible !important; }
+    body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* ── CORRECCIÓN CRÍTICA: overflow:hidden rompe los saltos de página en Chrome ── */
+    .detail-card { overflow: visible !important; }
+
+    /* ── FORZAR SALTO LIMPIO antes de cada sección principal ── */
+    #errores, #journey, #copy, #detalle, #competencia, #plan, #quickwins {
+      break-before: page !important;
+      page-break-before: page !important;
+    }
+
+    /* ── EXEC-BOX: comprimir para que quepa en página y encolar h2 con su párrafo ── */
+    .exec-box { padding: 20px 24px !important; }
+    .exec-box h2 {
+      font-size: 13px !important;
+      margin-bottom: 8px !important;
+      margin-top: 16px !important;
+      break-after: avoid !important;
+      page-break-after: avoid !important;
+    }
+    .exec-para {
+      font-size: 13px !important;
+      line-height: 1.6 !important;
+      margin-bottom: 10px !important;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* ── DETAIL CARDS: mantener header+body juntos ── */
+    .detail-card {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    .two-col {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* ── ELEMENTOS CORTOS: mantener intactos ── */
+    .alert, .quickwin, .copy-example, .journey-step, .score-row, .card {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+
+    /* ── ENCABEZADOS: nunca solos al final de página ── */
+    h2, h3, h4, .section-title, .detail-header {
+      break-after: avoid !important;
+      page-break-after: avoid !important;
+    }
+
+    /* ── TABLAS: filas no se cortan ── */
+    tr {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+  }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .hero .meta { gap: 20px; }
+    .score-row .label { width: 140px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="brand">🔍 Auditoría Digital</span>
+  <a href="#resumen">Resumen</a>
+  <a href="#puntuaciones">Puntuaciones</a>
+  <a href="#errores">Errores</a>
+  <a href="#journey">Customer Journey</a>
+  <a href="#copy">Copy</a>
+  <a href="#detalle">Por Área</a>
+  <a href="#competencia">Competencia</a>
+  <a href="#plan">Plan de Acción</a>
+  <a href="#quickwins">Quick Wins</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="tag">Auditoría de Presencia Digital</div>
+  <h1>Toldos Mataró</h1>
+  <p class="sub">toldosmataro.es · @toldos_mataro · Mayo 2026</p>
+  <div style="margin-bottom:32px;">
+    <div class="score-circle" style="background: conic-gradient(var(--accent2) 0% 58%, rgba(255,255,255,.15) 58% 100%);">
+      <span class="score-val">58</span>
+    </div>
+    <div style="font-size:13px; opacity:.6; margin-top:4px;">Puntuación global / 100</div>
+  </div>
+  <div class="hero meta">
+    <div class="hero meta-item">
+      <div class="val" style="color:#e84545;">2</div>
+      <div class="lbl">Errores críticos</div>
+    </div>
+    <div class="hero meta-item">
+      <div class="val" style="color:#f5a623;">4</div>
+      <div class="lbl">Incoherencias</div>
+    </div>
+    <div class="hero meta-item">
+      <div class="val" style="color:#27ae60;">4</div>
+      <div class="lbl">Quick wins</div>
+    </div>
+    <div class="hero meta-item">
+      <div class="val" style="color:#2980b9;">68★</div>
+      <div class="lbl">Reseñas Google</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- RESUMEN EJECUTIVO -->
+<section id="resumen">
+  <div class="section-title">📋 Resumen Ejecutivo</div>
+  <div class="section-desc">Estado actual del negocio digital en 3 puntos clave.</div>
+  <div class="exec-box">
+    <h2>ESTADO ACTUAL</h2>
+    <p class="exec-para">Toldos Mataró tiene <strong>una web funcional y bien estructurada</strong>, una oferta de servicios clara y una reputación excelente: <strong>68 reseñas en Google con valoración "Excelente"</strong>, mostradas mediante un widget dinámico en la propia web, más 27 reseñas adicionales con 4,8/5 en Habitissimo. El negocio está bien posicionado para búsquedas locales como "toldos mataró" y muestra social proof real y potente. Hay fundamentos digitales sólidos sobre los que trabajar.</p>
+    <h2 style="margin-top:20px;">EL PROBLEMA PRINCIPAL</h2>
+    <p class="exec-para">Los problemas son más de imagen y captación que de contenido. La web no dispone de un email de contacto corporativo visible para los clientes, y el dominio provisional de Hostinger sigue apareciendo públicamente en la declaración de accesibilidad en lugar del dominio oficial. No hay publicidad digital activa, no hay captación de emails y el post-venta prácticamente no existe: los clientes compran y desaparecen sin que el negocio haga nada para retenerlos o que recomienden.</p>
+    <h2 style="margin-top:20px;">LA OPORTUNIDAD</h2>
+    <p class="exec-para">Con <strong>5 acciones gratuitas en menos de una semana</strong>, Toldos Mataró puede presentarse como un negocio mucho más serio y profesional. A medio plazo, activar Google Ads y un sistema básico de email marketing puede traducirse directamente en más leads cualificados en temporada alta (marzo-agosto), que es cuando la competencia por captación de clientes se dispara.</p>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- PUNTUACIONES -->
+<section id="puntuaciones">
+  <div class="section-title">📊 Puntuaciones por Área</div>
+  <div class="section-desc">Evaluación de cada pilar de la presencia digital.</div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3><span class="icon">🌐</span> Web & UX</h3>
+      <div class="score-row"><span class="label">Web y UX</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:65%"></div></div><span class="num">65</span></div>
+      <div class="score-row"><span class="label">SEO local</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:68%"></div></div><span class="num">68</span></div>
+      <div class="score-row"><span class="label">Copy y comunicación</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:62%"></div></div><span class="num">62</span></div>
+      <div class="score-row"><span class="label">Oferta y precios</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:55%"></div></div><span class="num">55</span></div>
+      <div class="score-row"><span class="label">Contenido / portfolio</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:58%"></div></div><span class="num">58</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">📱</span> Captación & Conversión</h3>
+      <div class="score-row"><span class="label">Redes sociales</span><div class="bar-wrap"><div class="bar bar-red" style="width:30%"></div></div><span class="num">30</span></div>
+      <div class="score-row"><span class="label">Anuncios Meta/Google</span><div class="bar-wrap"><div class="bar bar-red" style="width:15%"></div></div><span class="num">15</span></div>
+      <div class="score-row"><span class="label">Customer Journey</span><div class="bar-wrap"><div class="bar bar-red" style="width:42%"></div></div><span class="num">42</span></div>
+      <div class="score-row"><span class="label">Reputación online</span><div class="bar-wrap"><div class="bar bar-green" style="width:85%"></div></div><span class="num">85</span></div>
+      <div class="score-row"><span class="label">Google Business</span><div class="bar-wrap"><div class="bar bar-yellow" style="width:65%"></div></div><span class="num">65</span></div>
+      <div class="score-row"><span class="label">Coherencia de marca</span><div class="bar-wrap"><div class="bar bar-red" style="width:48%"></div></div><span class="num">48</span></div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ERRORES E INCOHERENCIAS -->
+<section id="errores">
+  <div class="section-title">🚨 Errores e Incoherencias Detectadas</div>
+  <div class="section-desc">Ordenados por impacto en negocio. Los críticos necesitan solución inmediata.</div>
+
+  <!-- CRÍTICOS -->
+  <div style="font-size:12px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; margin-top:8px;">── Errores Críticos</div>
+
+  <div class="alert alert-critical">
+    <div class="alert-icon">💣</div>
+    <div class="alert-body">
+      <strong>Dominio provisional de Hostinger visible públicamente en la web <span class="badge badge-high">Crítico</span></strong>
+      <p>La declaración de accesibilidad de la web hace referencia al dominio provisional de Hostinger (<strong>paleturquoise-jay-325062.hostingersite.com</strong>) en lugar del dominio oficial del negocio (toldosmataro.es). Cualquier usuario que acceda a esa página verá un dominio genérico y técnico que no corresponde a la marca, lo que puede generar desconfianza.</p>
+      <p style="margin-top:8px; font-weight:600; color:#b91c1c;">→ Cómo corregirlo: Actualizar la declaración de accesibilidad para que todas las referencias apunten a <strong>toldosmataro.es</strong>. Tiempo estimado: 15-30 minutos.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-critical">
+    <div class="alert-icon">📧</div>
+    <div class="alert-body">
+      <strong>Sin email de contacto visible para los clientes <span class="badge badge-high">Crítico</span></strong>
+      <p>La web ofrece teléfono, WhatsApp y formulario de contacto, pero no hay ninguna dirección de email corporativa visible para los clientes. Esto limita la captación: hay perfiles de cliente —empresas, comunidades de vecinos, negocios— que prefieren iniciar el contacto por email y, al no encontrarlo, pueden abandonar o irse a la competencia que sí lo muestre.</p>
+      <p style="margin-top:8px; font-weight:600; color:#b91c1c;">→ Cómo corregirlo: Crear y publicar una cuenta de email corporativa (ej. <strong>info@toldosmataro.es</strong>) y añadirla visiblemente en la página de contacto y en el footer. Tiempo estimado: 30-60 minutos. Coste: incluido en el plan de hosting.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-ok">
+    <div class="alert-icon">✅</div>
+    <div class="alert-body">
+      <strong>Sección de testimonios con reseñas reales de Google <span class="badge" style="background:#dcfce7;color:#166534;">Punto fuerte</span></strong>
+      <p>La web muestra <strong>68 reseñas con valoración "Excelente" de Google</strong> en el apartado "¿Qué opinan los clientes de Toldos Mataró?". Este es uno de los activos digitales más valiosos del negocio y un diferenciador claro frente a competidores directos que no tienen testimonios en web.</p>
+      <p style="margin-top:8px; font-weight:600; color:#166534;">→ Mantener y ampliar: seguir solicitando reseñas en Google activamente para reforzar este diferenciador.</p>
+    </div>
+  </div>
+
+  <!-- INCOHERENCIAS -->
+  <div style="font-size:12px; font-weight:700; color:var(--accent2); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; margin-top:24px;">── Incoherencias</div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">📵</div>
+    <div class="alert-body">
+      <strong>Post-venta completamente inexistente <span class="badge badge-medium">Alto</span></strong>
+      <p>No se detecta ningún sistema de seguimiento post-venta: sin email marketing, sin newsletter, sin programa de referidos, sin solicitud de reseñas. Un cliente que compra un toldo podría necesitar reparación en 2-3 años, cambio de lona, motorización adicional o recomendar el servicio. Sin sistema de retención, todo ese potencial se pierde.</p>
+      <p style="margin-top:8px; font-weight:600; color:#92400e;">→ Quick fix: Crear una secuencia de 3 emails post-instalación: agradecimiento + guía de mantenimiento + petición de reseña.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">🔇</div>
+    <div class="alert-body">
+      <strong>Sin publicidad digital activa en temporada alta <span class="badge badge-medium">Alto</span></strong>
+      <p>No se detectan anuncios activos en Meta Ads ni indicios de Google Ads. La temporada alta de toldos (marzo-agosto) es competitiva: hay al menos 6-8 instaladores activos en el Maresme. Sin inversión en captación, el negocio depende exclusivamente del SEO orgánico y el boca a boca, lo que limita el crecimiento.</p>
+      <p style="margin-top:8px; font-weight:600; color:#92400e;">→ Oportunidad: Google Ads para "instalar toldo mataró" + "reparación toldo mataró" en temporada alta.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">📱</div>
+    <div class="alert-body">
+      <strong>Redes sociales con presencia mínima o inaccesible <span class="badge badge-medium">Medio</span></strong>
+      <p>Solo se detecta un perfil de Instagram (@toldos_mataro). No hay Facebook, LinkedIn, TikTok ni YouTube. El perfil de Instagram no es accesible públicamente para análisis, lo que sugiere que puede tener configuración restrictiva o poca actividad. Para un negocio visual como la instalación de toldos, el contenido de antes/después en redes puede ser muy efectivo.</p>
+      <p style="margin-top:8px; font-weight:600; color:#92400e;">→ Plan: 2 posts/semana en Instagram con fotos de trabajos realizados. Antes/después es el formato que mejor funciona en este sector.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-warning">
+    <div class="alert-icon">🏆</div>
+    <div class="alert-body">
+      <strong>No comunica experiencia ni diferenciador frente a competidores con 40+ años <span class="badge badge-medium">Medio</span></strong>
+      <p>Competidores como Aluminis Montper (desde 1981) y Toldos Hidalgo (desde 1983) llevan su antigüedad como estandarte de confianza. Toldos Mataró no comunica en ningún lugar cuántos años lleva en el sector ni cuántos toldos ha instalado. Esto es una desventaja perceptiva importante.</p>
+      <p style="margin-top:8px; font-weight:600; color:#92400e;">→ Si el negocio tiene historia, contarla. Si es más nuevo, compensar con número de instalaciones realizadas, garantías o especialización.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- CUSTOMER JOURNEY -->
+<section id="journey">
+  <div class="section-title">🗺️ Mapa del Customer Journey</div>
+  <div class="section-desc">Recorrido completo del cliente, de principio a fin. Las fases en rojo no existen o están rotas.</div>
+
+  <h4 style="font-size:13px; color:var(--muted); margin-bottom:16px; font-weight:600; text-transform:uppercase; letter-spacing:.3px;">PRE-VENTA</h4>
+  <div class="journey" style="margin-bottom:24px;">
+    <div class="journey-step partial">
+      <div class="step-inner">
+        <div class="step-icon">🔍</div>
+        <div class="step-name">Descubrimiento</div>
+        <div class="step-note">Google orgánico OK. Sin ads activos. Redes con baja visibilidad.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step partial">
+      <div class="step-inner">
+        <div class="step-icon">👁️</div>
+        <div class="step-name">Primera impresión</div>
+        <div class="step-note">Web clara y profesional. H1 orientado a SEO. Las reseñas de Google están en la página, pero no en el hero.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step partial">
+      <div class="step-inner">
+        <div class="step-icon">📖</div>
+        <div class="step-name">Investigación</div>
+        <div class="step-note">Portfolio de 12 trabajos. FAQ disponible. 68 reseñas Google en la web. Sin precios orientativos.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step missing">
+      <div class="step-inner">
+        <div class="step-icon">🤔</div>
+        <div class="step-name">Consideración</div>
+        <div class="step-note">Sin precios orientativos. Sin garantías explícitas. Las reseñas están en la página pero no en el hero. Fricción antes del presupuesto.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step ok">
+      <div class="step-inner">
+        <div class="step-icon">📞</div>
+        <div class="step-name">Contacto</div>
+        <div class="step-note">WhatsApp y teléfono directos. Formulario con campos inteligentes.</div>
+      </div>
+    </div>
+  </div>
+
+  <h4 style="font-size:13px; color:var(--muted); margin-bottom:16px; font-weight:600; text-transform:uppercase; letter-spacing:.3px;">POST-VENTA — Todo en rojo: estas fases NO existen</h4>
+  <div class="journey">
+    <div class="journey-step ok">
+      <div class="step-inner">
+        <div class="step-icon">🔧</div>
+        <div class="step-name">Instalación</div>
+        <div class="step-note">Servicio según reseñas rápido y profesional.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step missing">
+      <div class="step-inner">
+        <div class="step-icon">📧</div>
+        <div class="step-name">Seguimiento</div>
+        <div class="step-note">No hay email de bienvenida ni guía de mantenimiento.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step missing">
+      <div class="step-inner">
+        <div class="step-icon">⭐</div>
+        <div class="step-name">Reseña</div>
+        <div class="step-note">No se pide reseña activamente a los clientes.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step missing">
+      <div class="step-inner">
+        <div class="step-icon">🔄</div>
+        <div class="step-name">Upsell</div>
+        <div class="step-note">No hay oferta de motorización, cambio de lona o mantenimiento programado.</div>
+      </div>
+    </div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step missing">
+      <div class="step-inner">
+        <div class="step-icon">📣</div>
+        <div class="step-name">Referidos</div>
+        <div class="step-note">Sin programa de recomendación. El boca a boca queda al azar.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-critical" style="margin-top:24px;">
+    <div class="alert-icon">💡</div>
+    <div class="alert-body">
+      <strong>Dónde se pierden los clientes</strong>
+      <p>La mayor fuga está en la fase de <strong>Consideración</strong>: el cliente llega a la web, ve el portfolio y las reseñas de Google, pero no encuentra precios orientativos ni garantías explícitas. Sin esos elementos, muchos solicitarán presupuesto a varios proveedores a la vez y el que antes responda o mejor precio dé, gana. En post-venta, la fuga es total: el cliente compra y desaparece sin que el negocio haga seguimiento.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- ANÁLISIS DEL COPY -->
+<section id="copy">
+  <div class="section-title">✍️ Análisis del Copy</div>
+  <div class="section-desc">Evaluación del lenguaje y los textos en todos los canales detectados.</div>
+
+  <div class="grid grid-2" style="margin-bottom:24px;">
+    <div class="card">
+      <h3><span class="icon">✅</span> Lo que funciona</h3>
+      <ul style="padding-left:18px;">
+        <li style="margin-bottom:8px; font-size:13.5px;">El H1 es sólido: incluye la keyword local + el beneficio (sombra a medida)</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">Las páginas de servicio hablan en términos de beneficios para el cliente</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">El proceso de 4 pasos (diagnóstico → propuesta → instalación → soporte) genera confianza</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">El widget de WhatsApp con saludo personalizado reduce la fricción de contacto</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">El formulario de contacto con preguntas específicas (medidas, orientación, tipo) muestra expertise</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="icon">❌</span> Lo que falla</h3>
+      <ul style="padding-left:18px;">
+        <li style="margin-bottom:8px; font-size:13.5px;">CTAs débiles: "Solicitar presupuesto" es genérico, no crea urgencia ni diferencia</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">Sin diferenciador real: ¿por qué elegirles a ellos y no a Aluminis Montper o Toldos Hidalgo?</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">No comunican garantías, plazos de instalación ni años de experiencia</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">La propuesta de valor "calidad y elegancia al alcance de todos" es demasiado genérica</li>
+        <li style="margin-bottom:8px; font-size:13.5px;">Sin prueba social integrada en el copy (números, estadísticas, proyectos realizados)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h4 style="font-size:14px; font-weight:700; margin-bottom:16px;">Ejemplos de mejora: antes y después</h4>
+
+  <div class="copy-example">
+    <div class="label-before">ANTES (CTA actual)</div>
+    <div class="text before">"Solicitar presupuesto"</div>
+    <div class="label-after">DESPUÉS (CTA con intención)</div>
+    <div class="text after">"Pide tu presupuesto gratis — respuesta en 24h"</div>
+  </div>
+
+  <div class="copy-example">
+    <div class="label-before">ANTES (propuesta de valor genérica)</div>
+    <div class="text before">"La calidad y la elegancia al alcance de todos"</div>
+    <div class="label-after">DESPUÉS (específica y diferenciada)</div>
+    <div class="text after">"Instalamos en menos de 5 días. Garantía de 3 años en materiales. Más de 500 toldos instalados en el Maresme."</div>
+  </div>
+
+  <div class="copy-example">
+    <div class="label-before">ANTES (hero sin cifra de reseñas)</div>
+    <div class="text before">"Toldos en Mataró a medida para terrazas, balcones, ventanas y negocios"</div>
+    <div class="label-after">DESPUÉS (con la reputación integrada en el primer impacto)</div>
+    <div class="text after">"Toldos a medida en Mataró — Más de 68 clientes satisfechos avalan nuestro trabajo. ⭐⭐⭐⭐⭐ Google"</div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- DESGLOSE POR ÁREA -->
+<section id="detalle">
+  <div class="section-title">🔬 Desglose Detallado por Área</div>
+  <div class="section-desc">Análisis completo de cada pilar de la presencia digital.</div>
+
+  <!-- WEB -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>🌐</span> Web & UX <span class="score-pill yellow" style="margin-left:8px;">65/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="two-col">
+        <div>
+          <h4>Lo que funciona</h4>
+          <ul>
+            <li>H1 claro y con keyword local ("Toldos en Mataró a medida")</li>
+            <li>Portfolio filterable por tipo de toldo — muy útil</li>
+            <li>Proceso de 4 pasos visible y tranquilizador</li>
+            <li>WhatsApp widget con saludo personalizado</li>
+            <li>Horarios visibles: L-V 9-14 y 16-20, Sáb 9-14</li>
+            <li>Multiidioma (40 idiomas) — útil en zona turística</li>
+            <li>Badge NextGenerationEU — señal de formalidad</li>
+            <li>Formulario con campos inteligentes en contacto</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="bad">Lo que falla</h4>
+          <ul>
+            <li>Dominio provisional de Hostinger visible en la declaración de accesibilidad</li>
+            <li>Sin email de contacto corporativo visible para los clientes</li>
+            <li>Sin Google Maps ni referencia clara a la zona de servicio en la página de contacto</li>
+            <li>Sin precios orientativos (genera fricción)</li>
+            <li>Sin blog ni contenido actualizado</li>
+            <li>Sin pop-up ni lead magnet para captar emails</li>
+            <li>Dos teléfonos distintos en distintas fuentes (667 vs 937)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>🔎</span> SEO Local <span class="score-pill yellow" style="margin-left:8px;">68/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="two-col">
+        <div>
+          <h4>Lo que funciona</h4>
+          <ul>
+            <li>La web está en toldosmataro.es — dominio con keyword</li>
+            <li>H1 con keyword local correctamente formulado</li>
+            <li>Páginas de servicio con títulos SEO correctos ("Toldo brazo articulado en Mataró")</li>
+            <li>Menciones de zona: Mataró, Maresme, Vallès Oriental, Barcelonès</li>
+            <li>FAQ sección disponible (ayuda a SEO de posición 0)</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="bad">Lo que falla</h4>
+          <ul>
+            <li>Sin blog de contenido (artículos sobre tipos de toldos, mantenimiento...)</li>
+            <li>No se puede verificar ficha de Google Business en Maps</li>
+            <li>Sin schema markup de negocio local visible</li>
+            <li>Sin datos estructurados de reseñas (Schema markup tipo Review/AggregateRating) que muestren estrellas directamente en los resultados de Google</li>
+            <li>Competidores con 40 años de historia tienen más backlinks históricos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE BUSINESS -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>🗺️</span> Google Business / Maps <span class="score-pill yellow" style="margin-left:8px;">65/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="two-col">
+        <div>
+          <h4>Lo que funciona</h4>
+          <ul>
+            <li><strong>68 reseñas en Google</strong> — confirma que la ficha existe y está activa</li>
+            <li>Widget de reseñas Google integrado en la web con carga dinámica</li>
+            <li>El negocio aparece en MundoToldos y ProvenExpert (presencia en directorios)</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="bad">Lo que falla</h4>
+          <ul>
+            <li>Sin zona de servicio destacada en la página de contacto (Mataró, Maresme, Vallès...)</li>
+            <li>No se sabe si la ficha tiene fotos actualizadas y descripción optimizada</li>
+            <li>ProvenExpert: 0 reseñas (perfil creado en junio 2024, sin uso)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="alert alert-warning" style="margin-top:16px;">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-body">
+          <strong>Acción urgente</strong>
+          <p>Verificar el estado de la ficha de Google Business en <strong>business.google.com</strong>. Si no está reclamada, hacerlo hoy. Una ficha optimizada con fotos, horarios y respuestas a reseñas puede doblar la visibilidad local sin coste.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPUTACIÓN -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>⭐</span> Reputación Online <span class="score-pill green" style="margin-left:8px;">85/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="two-col">
+        <div>
+          <h4>Lo que funciona</h4>
+          <ul>
+            <li><strong>68 reseñas en Google con valoración "Excelente"</strong> — muy destacado en el sector</li>
+            <li>Widget de Google Reviews integrado en la web y visible para todos los visitantes</li>
+            <li><strong>27 reseñas adicionales en Habitissimo con media 4,8/5</strong></li>
+            <li>Valoraciones destacan: rapidez de respuesta, profesionalidad y buen precio</li>
+            <li>Sello "Favoritissimo" de confianza 2024-2025</li>
+            <li>Reputación claramente superior a competidores directos detectados</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="bad">Lo que falla</h4>
+          <ul>
+            <li>ProvenExpert: 0 reseñas (perfil activo desde junio 2024, sin uso)</li>
+            <li>Sin sistema automático de solicitud de reseñas post-instalación</li>
+            <li>Las 68 reseñas no se usan como cifra de impacto en el copy de la web ("Más de 60 clientes satisfechos avalan nuestro trabajo")</li>
+            <li>La reputación podría multiplicarse dirigiendo clientes también a Houzz, Trustpilot o Milanuncios</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REDES SOCIALES -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>📱</span> Redes Sociales <span class="score-pill red" style="margin-left:8px;">30/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="two-col">
+        <div>
+          <h4>Lo que funciona</h4>
+          <ul>
+            <li>Perfil de Instagram existe (@toldos_mataro)</li>
+            <li>URL de Instagram visible en web y documentación</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="bad">Lo que falla</h4>
+          <ul>
+            <li>Instagram no accesible para análisis (posible cuenta privada o baja actividad)</li>
+            <li>Sin Facebook Page activa detectada</li>
+            <li>Sin TikTok (potencial enorme para vídeos de instalación)</li>
+            <li>Sin YouTube (tutoriales de mantenimiento = SEO de largo plazo)</li>
+            <li>Sin LinkedIn (para clientes B2B: restaurantes, hoteles, negocios)</li>
+            <li>Sin Pinterest (sector de decoración/terraza muy activo)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADS -->
+  <div class="detail-card">
+    <div class="detail-header">
+      <h3><span>📢</span> Publicidad Digital (Meta Ads / Google Ads) <span class="score-pill red" style="margin-left:8px;">15/100</span></h3>
+    </div>
+    <div class="detail-body">
+      <div class="alert alert-warning" style="margin-bottom:16px;">
+        <div class="alert-icon">📊</div>
+        <div class="alert-body">
+          <strong>No se detectan anuncios activos en Meta Ads Library ni Google Ads</strong>
+          <p>La Biblioteca de Anuncios de Meta no muestra campañas activas para Toldos Mataró. No hay indicios de Google Ads en el código de la web. El negocio depende al 100% del tráfico orgánico.</p>
+        </div>
+      </div>
+      <p style="font-size:13.5px; color:#444; line-height:1.7;"><strong>Oportunidad perdida:</strong> La temporada alta de toldos es marzo-agosto. Durante esos meses, la intención de búsqueda de "instalar toldo" se dispara. Un presupuesto de 300-500€/mes en Google Ads para keywords locales ("instalar toldo mataró", "toldo motorizado mataró", "reparación toldo maresme") podría generar 15-25 leads cualificados adicionales al mes con ROI muy positivo dado el ticket medio del sector (400-1.300€ por instalación).</p>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- COMPETENCIA -->
+<section id="competencia">
+  <div class="section-title">🏁 Análisis Competitivo</div>
+  <div class="section-desc">Comparativa con los principales competidores locales detectados.</div>
+
+  <div style="overflow-x:auto; margin-bottom:24px;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th>Toldos Mataró</th>
+          <th>Aluminis Montper</th>
+          <th>Toldos Hidalgo</th>
+          <th>Sansa Toldos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Años en el sector</td>
+          <td>No comunicado</td>
+          <td class="winner"><span class="check">✓</span> Desde 1981 (44 años)</td>
+          <td><span class="check">✓</span> Desde 1983 (42 años)</td>
+          <td><span class="check">✓</span> +60 años</td>
+        </tr>
+        <tr>
+          <td>Web moderna y clara</td>
+          <td class="winner"><span class="check">✓</span> Sí</td>
+          <td><span class="check">✓</span> Sí</td>
+          <td><span class="cross">✗</span> Desactualizada</td>
+          <td><span class="check">✓</span> Sí</td>
+        </tr>
+        <tr>
+          <td>Portfolio de trabajos</td>
+          <td class="winner"><span class="check">✓</span> 12+ trabajos</td>
+          <td><span class="cross">✗</span> Sin galería</td>
+          <td><span class="partial-mark">~</span> Limitado</td>
+          <td><span class="check">✓</span> Amplio</td>
+        </tr>
+        <tr>
+          <td>Testimonios en web</td>
+          <td class="winner"><span class="check">✓</span> 68 reseñas Google (widget)</td>
+          <td><span class="cross">✗</span> No visibles</td>
+          <td><span class="cross">✗</span> Sin testimonios</td>
+          <td><span class="partial-mark">~</span> Algunos</td>
+        </tr>
+        <tr>
+          <td>Precios visibles</td>
+          <td><span class="cross">✗</span> No</td>
+          <td><span class="cross">✗</span> No</td>
+          <td><span class="cross">✗</span> No</td>
+          <td><span class="cross">✗</span> No</td>
+        </tr>
+        <tr>
+          <td>WhatsApp directo</td>
+          <td class="winner"><span class="check">✓</span> Sí</td>
+          <td><span class="partial-mark">~</span> Solo tel/email</td>
+          <td><span class="cross">✗</span> No</td>
+          <td><span class="partial-mark">~</span> Formulario</td>
+        </tr>
+        <tr>
+          <td>Reseñas verificadas</td>
+          <td><span class="check">✓</span> 4,8/5 Habitissimo</td>
+          <td><span class="cross">✗</span> Sin detectar</td>
+          <td><span class="cross">✗</span> Sin detectar</td>
+          <td><span class="partial-mark">~</span> Algunas</td>
+        </tr>
+        <tr>
+          <td>Publicidad activa</td>
+          <td><span class="cross">✗</span> No detectada</td>
+          <td><span class="cross">✗</span> No detectada</td>
+          <td><span class="cross">✗</span> Facebook básico</td>
+          <td><span class="partial-mark">~</span> Posible</td>
+        </tr>
+        <tr>
+          <td>Motorización / sensores</td>
+          <td class="winner"><span class="check">✓</span> Sí, explícito</td>
+          <td><span class="check">✓</span> Somfy IO</td>
+          <td><span class="partial-mark">~</span> Mencionado</td>
+          <td><span class="check">✓</span> Sí</td>
+        </tr>
+        <tr>
+          <td>Dirección física visible</td>
+          <td><span class="cross">✗</span> No en web</td>
+          <td><span class="check">✓</span> Visible</td>
+          <td><span class="check">✓</span> Tienda física</td>
+          <td><span class="check">✓</span> Fábrica propia</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="alert alert-ok">
+      <div class="alert-icon">🎯</div>
+      <div class="alert-body">
+        <strong>Ventaja competitiva real de Toldos Mataró</strong>
+        <p>Web más moderna que Toldos Hidalgo. Portfolio visual con galería filtrable (único entre los analizados). WhatsApp directo. Reseñas verificadas con puntuación excelente. El servicio integral (instalación + reparación + motorización con sensores) es un diferenciador que no todos ofrecen.</p>
+      </div>
+    </div>
+    <div class="alert alert-warning">
+      <div class="alert-icon">⚡</div>
+      <div class="alert-body">
+        <strong>Hueco de mercado sin explotar</strong>
+        <p>Toldos Mataró ya lleva ventaja en testimonios: es el único con un widget de 68 reseñas Google en la web. Ningún competidor detectado tiene precios orientativos visibles ni contenido de redes sociales sólido. Mantener esa ventaja y añadir los elementos que faltan (precio orientativo, garantías, redes activas) ampliaría aún más la distancia con la competencia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- PLAN DE ACCIÓN -->
+<section id="plan">
+  <div class="section-title">📅 Plan de Acción Priorizado</div>
+  <div class="section-desc">Ordenado por impacto y urgencia. Las prioridades altas bloquean el crecimiento ahora mismo.</div>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Prioridad</th>
+          <th>Acción</th>
+          <th>Impacto esperado</th>
+          <th>Esfuerzo</th>
+          <th>Área</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-high">Crítico</span></td>
+          <td>Crear email corporativo info@toldosmataro.es y publicarlo en contacto y footer. Actualizar la declaración de accesibilidad para eliminar el dominio provisional de Hostinger</td>
+          <td class="impact-high">Credibilidad + captación por email</td>
+          <td>30-60 min</td>
+          <td>Web</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-high">Crítico</span></td>
+          <td>Destacar la zona de servicio en la página de contacto (Mataró, Maresme, Vallès Oriental, Barcelonès) y añadir un mapa visual del área de cobertura</td>
+          <td class="impact-high">Confianza + SEO local</td>
+          <td>1 h</td>
+          <td>Web / SEO</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-high">Alto</span></td>
+          <td>Añadir la cifra de reseñas en el hero de la web: "⭐ 68 clientes satisfechos en Google" para que el social proof sea visible desde el primer segundo</td>
+          <td class="impact-high">Conversión inmediata en hero</td>
+          <td>15 min</td>
+          <td>Web / Copy</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-high">Alto</span></td>
+          <td>Verificar y optimizar ficha de Google Business: fotos, horarios, descripción, responder reseñas</td>
+          <td class="impact-high">Visibilidad local en Maps</td>
+          <td>2-3 h</td>
+          <td>Google Business</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-high">Alto</span></td>
+          <td>Enviar mensaje a los 27 clientes de Habitissimo pidiendo reseña en Google Maps</td>
+          <td class="impact-high">+reseñas Google</td>
+          <td>1 h</td>
+          <td>Reputación</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-medium">Medio</span></td>
+          <td>Crear campaña Google Ads para "instalar toldo mataró" + "reparación toldo maresme" (temporada alta)</td>
+          <td class="impact-medium">+15-25 leads/mes</td>
+          <td>1 semana</td>
+          <td>Paid Media</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-medium">Medio</span></td>
+          <td>Añadir número de proyectos realizados y años de experiencia en el hero de la web</td>
+          <td class="impact-medium">Diferenciación vs competidores</td>
+          <td>2 h</td>
+          <td>Copy / Web</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-medium">Medio</span></td>
+          <td>Crear email automático post-instalación: agradecimiento + guía de mantenimiento + link a reseña</td>
+          <td class="impact-medium">+reseñas + retención</td>
+          <td>3-4 h</td>
+          <td>Post-venta</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-medium">Medio</span></td>
+          <td>Publicar 2 posts/semana en Instagram con fotos de trabajos realizados (formato antes/después)</td>
+          <td class="impact-medium">Visibilidad + leads redes</td>
+          <td>Recurrente</td>
+          <td>Redes Sociales</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">Bajo</span></td>
+          <td>Crear blog con artículos SEO: "qué toldo elegir para mi terraza", "cómo motorizar un toldo"</td>
+          <td class="impact-low">SEO largo plazo</td>
+          <td>2 h/semana</td>
+          <td>Contenido / SEO</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">Bajo</span></td>
+          <td>Crear perfil TikTok con vídeos de instalaciones y montajes (sin experiencia previa necesaria)</td>
+          <td class="impact-low">Alcance nuevo público</td>
+          <td>2 h/semana</td>
+          <td>Redes Sociales</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">Bajo</span></td>
+          <td>Implementar lead magnet ("Guía: cómo elegir el toldo ideal para tu terraza") para captar emails</td>
+          <td class="impact-low">Base de datos propia</td>
+          <td>1 semana</td>
+          <td>Captación / Email</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<hr class="divider">
+
+<!-- QUICK WINS -->
+<section id="quickwins">
+  <div class="section-title">⚡ Quick Wins — Esta semana</div>
+  <div class="section-desc">5 acciones gratuitas que puedes ejecutar en menos de 5 horas en total y que cambiarán la percepción del negocio inmediatamente.</div>
+
+  <div class="quickwin">
+    <div class="qnum">1</div>
+    <div>
+      <h4>Crear y publicar el email corporativo</h4>
+      <p>Entra al panel de Hostinger → Email → crear cuenta <strong>info@toldosmataro.es</strong>. Añádela de forma visible en la página de contacto y en el footer de la web. Actualiza también la declaración de accesibilidad para que use el dominio oficial (toldosmataro.es) en lugar del dominio provisional. Comprueba que el formulario envíe a ese email.</p>
+      <div class="meta-tags">
+
+        <span class="meta-tag fast">30 min</span>
+        <span class="meta-tag high">Impacto alto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quickwin">
+    <div class="qnum">2</div>
+    <div>
+      <h4>Destacar la zona de servicio en la página de contacto</h4>
+      <p>El negocio cubre Mataró, el Maresme, el Vallès Oriental y el Barcelonès, pero eso no queda visible de forma prominente en la página de contacto. Añade un bloque claro con los municipios a los que llegan, o un mapa visual del área de cobertura. Esto reduce abandonos de clientes que no saben si el servicio llega a su zona.</p>
+      <div class="meta-tags">
+
+        <span class="meta-tag fast">45 min</span>
+        <span class="meta-tag high">Impacto alto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quickwin">
+    <div class="qnum">3</div>
+    <div>
+      <h4>Optimizar la ficha de Google Business y añadir fotos</h4>
+      <p>Ya tienes 68 reseñas en Google — la ficha existe. Entra a business.google.com y verifica que la descripción, horarios, servicios y teléfono estén completos y actualizados. Sube al menos 10 fotos de trabajos realizados si no las tienes ya. Una ficha completa con fotos recibe hasta el doble de clics que una vacía.</p>
+      <div class="meta-tags">
+
+        <span class="meta-tag fast">1-2 horas</span>
+        <span class="meta-tag high">Impacto alto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quickwin">
+    <div class="qnum">4</div>
+    <div>
+      <h4>Explotar las 68 reseñas como cifra de impacto en el hero de la web</h4>
+      <p>Tienes un activo de confianza enorme que no estás comunicando activamente en el texto de la web. Añade en el hero o justo debajo: <em>"⭐ Más de 68 clientes satisfechos nos avalan en Google"</em>. Añádelo también en la página de cada servicio. Es un cambio de 10 minutos en el CMS que puede subir la tasa de conversión de visita a contacto.</p>
+      <div class="meta-tags">
+
+        <span class="meta-tag fast">15 min</span>
+        <span class="meta-tag high">Impacto alto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quickwin">
+    <div class="qnum">5</div>
+    <div>
+      <h4>Pedir reseñas en Google a tus clientes actuales</h4>
+      <p>Desde Google Business, copia el enlace directo para dejar reseñas. Envía un mensaje de WhatsApp personalizado a tus últimos 10-15 clientes: "Hola [nombre], nos alegra saber que quedó contento con su toldo. Si tiene un momento, nos ayudaría mucho que dejara una reseña en Google: [enlace]. ¡Gracias!" Hazlo de forma escalonada, no todo el mismo día.</p>
+      <div class="meta-tags">
+
+        <span class="meta-tag fast">1 hora</span>
+        <span class="meta-tag high">Impacto alto</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-ok" style="margin-top:8px;">
+    <div class="alert-icon">🏆</div>
+    <div class="alert-body">
+      <strong>Resultado esperado en 7 días</strong>
+      <p>Con estas 4 acciones: la web pasará a mostrar profesionalidad real (email correcto, dirección visible), la ficha de Google Business estará optimizada y las 68 reseñas estarán comunicadas activamente como argumento de venta en el copy. Estimación de mejora en puntuación: de 58 a ~72/100.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <div style="font-size:16px; font-weight:700; margin-bottom:8px;">Auditoría Digital · Toldos Mataró</div>
+  <div>Generada el 26 de mayo de 2026 · Basada en datos reales de toldosmataro.es, Habitissimo, ProvenExpert, Axesor y fuentes públicas</div>
+  <div style="margin-top:8px; opacity:.5; font-size:12px;">Este informe es confidencial y está elaborado para uso interno del negocio auditado.</div>
+</footer>
+
+</body>
+</html>
